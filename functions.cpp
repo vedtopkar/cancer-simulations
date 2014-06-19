@@ -137,3 +137,17 @@ void find_p_driver(Hist *pr1, Hist *pr2, Hist *pr3)
         
   }  
 }
+
+// Given a vector of lesions, return the index of the largest one
+unsigned int index_of_largest_lesion(vector<Lesion*> lesions)
+{
+  unsigned int index_largest = 0;
+  for(unsigned int i = 0; i <= lesions.size(); i++)
+  {
+    if(lesions[i]->rad > lesions[index_largest]->rad)
+    {
+      index_largest = i;
+    }
+  }
+  return index_largest;
+}

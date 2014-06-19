@@ -465,7 +465,7 @@ void save_spatial()
 
 int main_proc(int exit_size, int save_size, double max_time, double wait_time)
 {
-  int i,j,k,n,l,in,jn,kn,ntot;  
+  int i,j,k,n,l,in,jn,kn,ntot, wx;  
   int cc=0, timeout=0 ;
   double tt_old=tt ;
 
@@ -483,26 +483,28 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
     
     n=_drand48()*cells.size(); // get index of random cell
     Cell n_cell = cells[n]; // get random cell at index n
-    Lesion *ll=lesions[n_cell.lesion];
-    int wx=ll->wx ; 
-    k=cells[n].x+wx/2 ; j=n_cell.y+wx/2 ; i=n_cell.z+wx/2 ;
+    Lesion *ll = lesions[n_cell.lesion];
+    wx = ll->wx ; 
+    k = n_cell.x + wx/2;
+    j = n_cell.y + wx/2;
+    i = n_cell.z + wx/2;
     int need_wx_update=0 ;
-    if (k<2 || k>=ll->wx-3 || j<2 || j>=ll->wx-3 || i<2 || i>=ll->wx-3) need_wx_update=1 ; // if the lesion too big to fit
+    if (k < 2 || k >= wx - 3 || j < 2 || j >= wx - 3 || i < 2 || i >= wx - 3) need_wx_update=1 ; // if the lesion too big to fit
     // into the data structure **p, we need to update
-    if (_drand48()<tsc*genotypes[cells[n].gen]->growth[treatment]) { // reproduction
+    if (_drand48() < tsc*genotypes[n_cell.gen]->growth[treatment]) { // reproduction
       int nn=1+int(_drand48()*26) ; // select a random site nearby to which we attempt reproduction
       int in=(wx+i+kz[nn])%wx, jn=(wx+j+ky[nn])%wx, kn=(wx+k+kx[nn])%wx ;
         if (ll->p[in*wx+jn]->is_set(kn)==0) { // if this site is empty then the cell replicates itself
-        int no_SNPs=poisson() ; // newly produced cell can mutate and add "no_SNPs" new PMs
-        if (_drand48()>migr) { // with prob. 1-migr make a new cell in the same lesion
-          Cell c ; c.x=kn-wx/2 ; c.y=jn-wx/2 ; c.z=in-wx/2 ; c.lesion=cells[n].lesion ;
-          ll->p[in*wx+jn]->set(kn) ;
-          if (no_SNPs>0) { // if new PMs then...
-            c.gen=genotypes.size() ; genotypes.push_back(new Genotype(genotypes[cells[n].gen],cells[n].gen,no_SNPs)) ; // ... mutate 
-          } else { // ...otherwise just replicate
-            c.gen=cells[n].gen ; genotypes[cells[n].gen]->number++ ; 
-          }
-          cells.push_back(c) ; volume++ ;
+          int no_SNPs=poisson() ; // newly produced cell can mutate and add "no_SNPs" new PMs
+          if (_drand48()>migr) { // with prob. 1-migr make a new cell in the same lesion
+            Cell c ; c.x=kn-wx/2 ; c.y=jn-wx/2 ; c.z=in-wx/2 ; c.lesion=cells[n].lesion ;
+            ll->p[in*wx+jn]->set(kn) ;
+            if (no_SNPs>0) { // if new PMs then...
+              c.gen=genotypes.size() ; genotypes.push_back(new Genotype(genotypes[cells[n].gen],cells[n].gen,no_SNPs)) ; // ... mutate 
+            } else { // ...otherwise just replicate
+              c.gen=cells[n].gen ; genotypes[cells[n].gen]->number++ ; 
+            }
+            cells.push_back(c) ; volume++ ;
 
           ll->n++ ; 
 #ifndef NO_MECHANICS
