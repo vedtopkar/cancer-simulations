@@ -4,18 +4,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <vector>
+#include <iostream>
+#include "classes.h"
+#include "params.h"
+
+using namespace std;
+
+// DEFINE FUNCTIONS
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define SQR(x) (x)*(x)
 #define SWAPD(x, y) tempd = (x); (x) = (y); (y) = tempd
 #define SWAP(x, y) temp = (x); (x) = (y); (y) = temp
-#include <vector>
-#include "classes.h"
-#include <iostream>
-using namespace std;
 
 char *NUM ; // name of the directory created by the program; given as 1st argument from the command line
-
-#include "params.h"
 
 #ifdef __linux
 typedef unsigned int DWORD ;
@@ -475,13 +477,15 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
       // this is a courtesy towards other users running simulations on the same computer
     }    
 #endif
-    double tsc=0.01*cells.size() ; if (tsc>1) tsc=1 ;
-    tt+=tsc*timescale/cells.size() ; // update time
+    double tsc=0.01*cells.size();
+    if (tsc>1) tsc=1 ;
+    tt+=tsc*timescale/cells.size(); // update time
     
-    n=_drand48()*cells.size() ; // select random cell
-    Lesion *ll=lesions[cells[n].lesion] ;
+    n=_drand48()*cells.size(); // get index of random cell
+    Cell n_cell = cells[n]; // get random cell at index n
+    Lesion *ll=lesions[n_cell.lesion];
     int wx=ll->wx ; 
-    k=cells[n].x+wx/2 ; j=cells[n].y+wx/2 ; i=cells[n].z+wx/2 ; 
+    k=cells[n].x+wx/2 ; j=n_cell.y+wx/2 ; i=n_cell.z+wx/2 ;
     int need_wx_update=0 ;
     if (k<2 || k>=ll->wx-3 || j<2 || j>=ll->wx-3 || i<2 || i>=ll->wx-3) need_wx_update=1 ; // if the lesion too big to fit
     // into the data structure **p, we need to update

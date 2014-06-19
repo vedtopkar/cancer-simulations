@@ -1,4 +1,4 @@
-# Cancer Lattice Simulations
+# Cancer Lattice-Based Simulations
 Authored by Dr. Bartek Waclaw, modified by Ved Topkar
 
 ## Compilation
