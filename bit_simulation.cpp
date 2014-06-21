@@ -520,10 +520,6 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
 #ifdef RETROGRADE_MIGRATION
         //TODO: UPDATE ALGORITHM FOR WEIGHTED RANDOM MIGRATION
         } else if(_drand48() < p_retrograde_migration){
-          // migrate to the closest lesion
-          // unsigned int migration_target;
-          // unsigned int primary_lesion_index = index_of_largest_lesion(lesions);
-          // Lesion primary_lesion = lesions[primary_lesion_index];
 
           // Iterate over all lesions and find the closest lesion and distance to that lesion (taking into consideration lesion radius)
           int num_lesions = lesions.size();
@@ -569,9 +565,14 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
           int jtn = (wx+jt+ky[site_index])%wx;
           int ktn = (wx+kt+kx[site_index])%wx;
           
-          if (target_lesion->p[in*wx+jn]->is_set(kn) != 0) // target is empty, move cell here
+          if (target_lesion->p[in*wx+jn]->is_set(kn) != 0) // target not empty, find immediately adjacent spot to populate instead
           {
-            
+            bool empty_site = false;
+            while(!empty_site)
+            {
+              // search random sites for empty one until we find one
+
+            }
           }
 
           // unset cell from previous site
