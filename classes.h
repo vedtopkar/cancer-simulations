@@ -188,7 +188,7 @@ struct Lesion {
   ~Lesion() {
     nl-- ; 
     for (int i=0;i<wx*wx;i++) delete p[i] ;
-    delete [] p ;    
+    delete [] p ;
   }
   void update_wx() ;
   void find_closest() ;

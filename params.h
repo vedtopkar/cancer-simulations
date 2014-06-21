@@ -3,12 +3,14 @@
 #ifndef __BITMAIN
 
 // PARAMETERS BEGIN HERE
-const float gama=1e-2, gama_res=5e-8 ;  // probability of a PMs per cell per replication, and the prob. of resistant PM
+const float gama=1e-2;
+const float gama_res=5e-8;  // probability of a PMs per cell per replication, and the prob. of resistant PM
 // const float migr=1e-5 ; // probability of migration to a nearby place upon replication (and creation of a new lesion)
 
 const float migr=0.0; //SURF model
 
 #define RETROGRADE_MIGRATION // if defined, cells can migrate from their lesions back to the primary (biggest) lesion
+const float p_retrograde_migration = 1e-5;
 
 //#define DEATH_ON_SURFACE ; // if defined then cells die on surface only upon treatment (SURF model)
     // if not defined then cells die also in the volume (VOL model)

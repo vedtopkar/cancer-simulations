@@ -489,8 +489,7 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
     j = n_cell.y + wx/2;
     i = n_cell.z + wx/2;
 
-
-    int need_wx_update=0 ;
+    int need_wx_update=0;
     if (k < 2 || k >= wx - 3 || j < 2 || j >= wx - 3 || i < 2 || i >= wx - 3) need_wx_update=1 ; // if the lesion too big to fit
     // into the data structure **p, we need to update
     if (_drand48() < tsc*genotypes[n_cell.gen]->growth[treatment]) { // reproduction
@@ -520,7 +519,7 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
 #endif
 #ifdef RETROGRADE_MIGRATION
         //TODO: UPDATE ALGORITHM FOR WEIGHTED RANDOM MIGRATION
-        } else if(_drand48() < migr/2){
+        } else if(_drand48() < p_retrograde_migration){
           // migrate to the closest lesion
           // unsigned int migration_target;
           // unsigned int primary_lesion_index = index_of_largest_lesion(lesions);
@@ -529,37 +528,61 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
           // Iterate over all lesions and find the closest lesion and distance to that lesion (taking into consideration lesion radius)
           int num_lesions = lesions.size();
           double distance_to_nearest_lesion = -1.0;
-          unsigned int closest_lesion = 0;
+          unsigned int nearest_lesion_index = 0;
 
           for(int i = 0; i < num_lesions; i++)
           {
-            double distance_to_lesion_surface = sqrt(SQR(lesions[i].r.x - double(c.x)) + SQR(lesion[i].r.y - double(c.y)) + SQR(lesion[i].r.z - double(c.z))) - lesion.rad;
+            double distance_to_lesion_surface = sqrt(SQR(lesions[i]->r.x - double(n_cell.x)) + SQR(lesions[i]->r.y - double(n_cell.y)) + SQR(lesions[i]->r.z - double(n_cell.z))) - lesions[i]->rad;
             if(distance_to_nearest_lesion == -1.0)
             {
               distance_to_nearest_lesion = distance_to_lesion_surface;
-              nearest_lesion = 0;
+              nearest_lesion_index = 0;
             } else {
               if(distance_to_lesion_surface < distance_to_nearest_lesion)
               {
                 distance_to_nearest_lesion = distance_to_lesion_surface;
-                closest_lesion = i;
+                nearest_lesion_index = i;
               }
             }
           }
 
+          // For convenience, declare a pointer the target lesion
+          Lesion *target_lesion = lesions[nearest_lesion_index];
+          wx = target_lesion->wx;
+
           // find the nearest point on the closest lesion
-          vecd difference = lesions[closest_lesion]->r - vecd(double(c.x), double(c.y), double(c.z));
+          // we do this by finding the vector from the cell to the surface of the target lesion
+          // then scaling that vector to the distance from the cell to the target lesion surface
+          vecd difference = lesions[nearest_lesion_index]->r - vecd(double(n_cell.x), double(n_cell.y), double(n_cell.z));
           normalize(difference);
-          vecd target_site_vector = difference*distance_to_nearest_lesion;
+          vecd target_site_vector = lesions[nearest_lesion_index]->r + difference*distance_to_nearest_lesion;
 
+          // check if that target site is empty
+          // NOTE: a 't' in a variable name indicates that it pertains to the target lesion
+          kt = target_site_vector.x + wx/2;
+          jt = target_site_vector.y + wx/2;
+          it = target_site_vector.z + wx/2;
 
+          int site_index = 0;
 
+          int itn = (wx+it+kz[site_index])%wx;
+          int jtn = (wx+jt+ky[site_index])%wx;
+          int ktn = (wx+kt+kx[site_index])%wx;
+          
+          if (target_lesion->p[in*wx+jn]->is_set(kn) != 0) // target is empty, move cell here
+          {
+            
+          }
 
-          // look for a random adjacent site in the lattice that is empty
+          // unset cell from previous site
+          ll->p[i*(ll->wx)+j]->unset(k);
+          ll->number--;
 
-          // move the cell to that site
+          // set cell to new site
+          target_lesion->p[]
 
           // replicate the cell
+
 
 
           // here we migrate back to the nearest point on the primary lesion
