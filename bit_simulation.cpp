@@ -466,8 +466,8 @@ void save_spatial()
 int main_proc(int exit_size, int save_size, double max_time, double wait_time)
 {
   int i,j,k,n,l,in,jn,kn,ntot, wx;  
-  int cc=0, timeout=0 ;
-  double tt_old=tt ;
+  int cc=0, timeout=0;
+  double tt_old=tt;
 
   for(;;) {      // main loop 
 #ifdef __linux
@@ -488,6 +488,8 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
     k = n_cell.x + wx/2;
     j = n_cell.y + wx/2;
     i = n_cell.z + wx/2;
+
+
     int need_wx_update=0 ;
     if (k < 2 || k >= wx - 3 || j < 2 || j >= wx - 3 || i < 2 || i >= wx - 3) need_wx_update=1 ; // if the lesion too big to fit
     // into the data structure **p, we need to update
@@ -519,9 +521,47 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
 #ifdef RETROGRADE_MIGRATION
         //TODO: UPDATE ALGORITHM FOR WEIGHTED RANDOM MIGRATION
         } else if(_drand48() < migr/2){
-          // migrate back to primary lesion
-          unsigned int primary_lesion_index = index_of_largest_lesion(lesions);
-          Lesion primary_lesion = lesions[primary_lesion_index];
+          // migrate to the closest lesion
+          // unsigned int migration_target;
+          // unsigned int primary_lesion_index = index_of_largest_lesion(lesions);
+          // Lesion primary_lesion = lesions[primary_lesion_index];
+
+          // Iterate over all lesions and find the closest lesion and distance to that lesion (taking into consideration lesion radius)
+          int num_lesions = lesions.size();
+          double distance_to_nearest_lesion = -1.0;
+          unsigned int closest_lesion = 0;
+
+          for(int i = 0; i < num_lesions; i++)
+          {
+            double distance_to_lesion_surface = sqrt(SQR(lesions[i].r.x - double(c.x)) + SQR(lesion[i].r.y - double(c.y)) + SQR(lesion[i].r.z - double(c.z))) - lesion.rad;
+            if(distance_to_nearest_lesion == -1.0)
+            {
+              distance_to_nearest_lesion = distance_to_lesion_surface;
+              nearest_lesion = 0;
+            } else {
+              if(distance_to_lesion_surface < distance_to_nearest_lesion)
+              {
+                distance_to_nearest_lesion = distance_to_lesion_surface;
+                closest_lesion = i;
+              }
+            }
+          }
+
+          // find the nearest point on the closest lesion
+          vecd difference = lesions[closest_lesion]->r - vecd(double(c.x), double(c.y), double(c.z));
+          normalize(difference);
+          vecd target_site_vector = difference*distance_to_nearest_lesion;
+
+
+
+
+          // look for a random adjacent site in the lattice that is empty
+
+          // move the cell to that site
+
+          // replicate the cell
+
+
           // here we migrate back to the nearest point on the primary lesion
           // then we either mutate or just replicate
         }

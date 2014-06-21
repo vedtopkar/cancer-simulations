@@ -17,3 +17,11 @@ This will create a folder called `outfolder`, run `3` independent runs of the pr
 
 ## Parameters
 For now, you can use different parameters by altering values in the `params.h` file.
+
+## TODO
+### Features
+- Add retrograde migration
+
+### Refactoring
+- Put classes in their own files and add more inheritance
+- Make sure each file has a header
