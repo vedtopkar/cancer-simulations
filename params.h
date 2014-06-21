@@ -8,6 +8,8 @@ const float gama=1e-2, gama_res=5e-8 ;  // probability of a PMs per cell per rep
 
 const float migr=0.0; //SURF model
 
+#define RETROGRADE_MIGRATION // if defined, cells can migrate from their lesions back to the primary (biggest) lesion
+
 //#define DEATH_ON_SURFACE ; // if defined then cells die on surface only upon treatment (SURF model)
     // if not defined then cells die also in the volume (VOL model)
 //#define CORE_IS_DEAD  // when defined, core cells are dead 

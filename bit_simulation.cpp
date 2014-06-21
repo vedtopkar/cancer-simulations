@@ -516,13 +516,23 @@ int main_proc(int exit_size, int save_size, double max_time, double wait_time)
             ll->n0=ll->n ; 
           }
 #endif
+#ifdef RETROGRADE_MIGRATION
+        //TODO: UPDATE ALGORITHM FOR WEIGHTED RANDOM MIGRATION
+        } else if(_drand48() < migr/2){
+          // migrate back to primary lesion
+          unsigned int primary_lesion_index = index_of_largest_lesion(lesions);
+          Lesion primary_lesion = lesions[primary_lesion_index];
+          // here we migrate back to the nearest point on the primary lesion
+          // then we either mutate or just replicate
+        }
+#endif
         } else { // make a new lesion with probability "migr"
           int x=kn-wx/2+ll->r.x, y=jn-wx/2+ll->r.y, z=in-wx/2+ll->r.z ;
           if (no_SNPs>0) { // we either mutate and produce a new genotype
-            genotypes.push_back(new Genotype(genotypes[cells[n].gen],cells[n].gen,no_SNPs)) ;
+            genotypes.push_back(new Genotype(genotypes[n_cell.gen],n_cell.gen,no_SNPs)) ;
             lesions.push_back(new Lesion(genotypes.size()-1,x,y,z)) ;
           } else { //...or just replicate
-            genotypes[cells[n].gen]->number++ ; 
+            genotypes[n_cell.gen]->number++ ; 
             lesions.push_back(new Lesion(cells[n].gen,x,y,z)) ;
           }        
 #ifndef NO_MECHANICS
